@@ -1,0 +1,26 @@
+# Hasil kompilasi Java
+*.class
+
+# File Java lainnya
+*.jar
+*.war
+*.ear
+
+# Folder output/build
+out/
+bin/
+build/
+target/
+.gradle/
+
+# Konfigurasi IDE
+.idea/
+.vscode/
+.settings/
+*.iml
+.project
+.classpath
+
+# File sistem
+.DS_Store
+Thumbs.db
