@@ -2,113 +2,82 @@ import java.util.Scanner;
 
 public class App {
     public static void main(String[] args) {
+        int[][] matrix = bacaInput();
+        if (matrix != null) {
+            int[] hasil = proses(matrix);
+            cetakOutput(hasil);
+        }
+    }
+
+    private static int[][] bacaInput() {
         Scanner scanner = new Scanner(System.in);
-
+        if (!scanner.hasNextInt()) return null;
+        
         int n = scanner.nextInt();
+        // Validasi nilai n
+        if (n <= 0) {
+            System.out.println("Nilai n harus lebih dari 0");
+            return null;
+        }
+        
         int[][] matrix = new int[n][n];
-
-        // Membaca matriks
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
+                if (!scanner.hasNextInt()) return null;
                 matrix[i][j] = scanner.nextInt();
             }
         }
+        return matrix;
+    }
 
-        // Kasus khusus 1x1
+    private static int[] proses(int[][] matrix) {
+        int n = matrix.length;
+        
+        // Kasus khusus 1x1 dan 2x2
         if (n == 1) {
-            int tengah = matrix[0][0];
-
-            System.out.println("Nilai L: Tidak Ada");
-            System.out.println("Nilai Kebalikan L: Tidak Ada");
-            System.out.println("Nilai Tengah: " + tengah);
-            System.out.println("Perbedaan: Tidak Ada");
-            System.out.println("Dominan: " + tengah);
-
-            scanner.close();
-            return;
+            return new int[]{0, 0, matrix[0][0], 0, matrix[0][0], 1}; // 1 = flag kasus 1x1
         }
-
-        // Kasus khusus 2x2
         if (n == 2) {
             int total = 0;
-
-            for (int i = 0; i < n; i++) {
-                for (int j = 0; j < n; j++) {
-                    total += matrix[i][j];
-                }
-            }
-
-            System.out.println("Nilai L: Tidak Ada");
-            System.out.println("Nilai Kebalikan L: Tidak Ada");
-            System.out.println("Nilai Tengah: " + total);
-            System.out.println("Perbedaan: Tidak Ada");
-            System.out.println("Dominan: " + total);
-
-            scanner.close();
-            return;
+            for (int[] row : matrix) for (int val : row) total += val;
+            return new int[]{0, 0, total, 0, total, 2}; // 2 = flag kasus 2x2
         }
 
-        // Menghitung Nilai L
         int nilaiL = 0;
+        for (int i = 0; i < n; i++) nilaiL += matrix[i][0];
+        for (int j = 1; j < n - 1; j++) nilaiL += matrix[n - 1][j];
 
-        // Seluruh kolom pertama
-        for (int i = 0; i < n; i++) {
-            nilaiL += matrix[i][0];
-        }
-
-        // Baris terakhir, kecuali pojok kanan bawah
-        for (int j = 1; j < n - 1; j++) {
-            nilaiL += matrix[n - 1][j];
-        }
-
-        // Menghitung Nilai Kebalikan L
         int nilaiKebalikanL = 0;
+        for (int i = 0; i < n; i++) nilaiKebalikanL += matrix[i][n - 1];
+        for (int j = 1; j < n - 1; j++) nilaiKebalikanL += matrix[0][j];
 
-        // Seluruh kolom terakhir
-        for (int i = 0; i < n; i++) {
-            nilaiKebalikanL += matrix[i][n - 1];
-        }
-
-        // Baris pertama, kecuali pojok kiri atas
-        for (int j = 1; j < n - 1; j++) {
-            nilaiKebalikanL += matrix[0][j];
-        }
-
-        // Menghitung Nilai Tengah
         int nilaiTengah;
-
         if (n % 2 == 1) {
-            // Matriks ganjil
             nilaiTengah = matrix[n / 2][n / 2];
         } else {
-            // Matriks genap
-            int tengah = n / 2;
-
-            nilaiTengah = matrix[tengah - 1][tengah - 1]
-                    + matrix[tengah - 1][tengah]
-                    + matrix[tengah][tengah - 1]
-                    + matrix[tengah][tengah];
+            int t = n / 2;
+            nilaiTengah = matrix[t - 1][t - 1] + matrix[t - 1][t] + matrix[t][t - 1] + matrix[t][t];
         }
 
-        // Menghitung perbedaan absolut
         int perbedaan = Math.abs(nilaiL - nilaiKebalikanL);
+        int dominan = (perbedaan == 0) ? nilaiTengah : Math.max(nilaiL, nilaiKebalikanL);
 
-        // Menentukan dominan
-        int dominan;
+        return new int[]{nilaiL, nilaiKebalikanL, nilaiTengah, perbedaan, dominan, 0}; // 0 = kasus normal
+    }
 
-        if (perbedaan == 0) {
-            dominan = nilaiTengah;
+    private static void cetakOutput(int[] hasil) {
+        if (hasil[5] == 1 || hasil[5] == 2) {
+            System.out.println("Nilai L: Tidak Ada");
+            System.out.println("Nilai Kebalikan L: Tidak Ada");
+            System.out.println("Nilai Tengah: " + hasil[2]);
+            System.out.println("Perbedaan: Tidak Ada");
+            System.out.println("Dominan: " + hasil[4]);
         } else {
-            dominan = Math.max(nilaiL, nilaiKebalikanL);
+            System.out.println("Nilai L: " + hasil[0]);
+            System.out.println("Nilai Kebalikan L: " + hasil[1]);
+            System.out.println("Nilai Tengah: " + hasil[2]);
+            System.out.println("Perbedaan: " + hasil[3]);
+            System.out.println("Dominan: " + hasil[4]);
         }
-
-        // Menampilkan hasil
-        System.out.println("Nilai L: " + nilaiL);
-        System.out.println("Nilai Kebalikan L: " + nilaiKebalikanL);
-        System.out.println("Nilai Tengah: " + nilaiTengah);
-        System.out.println("Perbedaan: " + perbedaan);
-        System.out.println("Dominan: " + dominan);
-
-        scanner.close();
     }
 }
