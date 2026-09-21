@@ -149,7 +149,7 @@ public class App {
             grade = "AB";
         } else if (nilaiAkhir >= 64.5) {
             grade = "B";
-        } else if (nilaiAkhir > 56.5) {
+        } else if (nilaiAkhir >= 57.0) {
             grade = "BC";
         } else if (nilaiAkhir >= 49.5) {
             grade = "C";
