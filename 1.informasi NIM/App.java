@@ -64,7 +64,7 @@ public class App {
         int urutan = Integer.parseInt(kodeUrutan);
 
         // Menampilkan hasil
-        System.out.println("Inforamsi NIM " + nim + ": ");
+        System.out.println("Informasi NIM " + nim + ": ");
         System.out.println(">> Program Studi: " + programStudi);
         System.out.println(">> Angkatan: " + angkatan);
         System.out.println(">> Urutan: " + urutan);
