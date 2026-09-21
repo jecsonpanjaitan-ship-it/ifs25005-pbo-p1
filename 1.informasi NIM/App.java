@@ -42,7 +42,7 @@ public class App {
                 programStudi = "Sarjana Bioteknologi";
                 break;
             case "114":
-                programStudi = "Diploma 4 Teknologi Rekasaya Perangkat Lunak";
+                programStudi = "Diploma 4 Teknologi Rekayasa Perangkat Lunak";
                 break;
             case "113":
                 programStudi = "Diploma 3 Teknologi Informasi";
@@ -64,7 +64,7 @@ public class App {
         int urutan = Integer.parseInt(kodeUrutan);
 
         // Menampilkan hasil
-        System.out.println("Inforamsi NIM " + nim + ": ");
+        System.out.println("Informasi NIM " + nim + ": ");
         System.out.println(">> Program Studi: " + programStudi);
         System.out.println(">> Angkatan: " + angkatan);
         System.out.println(">> Urutan: " + urutan);
