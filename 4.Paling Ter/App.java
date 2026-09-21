@@ -1,123 +1,80 @@
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Scanner;
 
 public class App {
     public static void main(String[] args) {
+        Map<Integer, Integer> frekuensi = bacaInput();
+        if (frekuensi != null && !frekuensi.isEmpty()) {
+            int[] hasil = proses(frekuensi);
+            cetakOutput(frekuensi, hasil);
+        }
+    }
+
+    private static Map<Integer, Integer> bacaInput() {
         Scanner scanner = new Scanner(System.in);
-
         Map<Integer, Integer> frekuensi = new HashMap<>();
-
+        
         while (scanner.hasNextLine()) {
             String input = scanner.nextLine().trim();
-
-            if (input.equals("---")) {
-                break;
+            if (input.equals("---")) break;
+            if (input.isEmpty()) continue;
+            
+            try {
+                int nilai = Integer.parseInt(input);
+                frekuensi.put(nilai, frekuensi.getOrDefault(nilai, 0) + 1);
+            } catch (NumberFormatException e) {
+                System.out.println("Input tidak valid, harap masukkan angka.");
             }
-
-            if (input.isEmpty()) {
-                continue;
-            }
-
-            int nilai = Integer.parseInt(input);
-
-            frekuensi.put(nilai, frekuensi.getOrDefault(nilai, 0) + 1);
         }
+        return frekuensi;
+    }
 
-        scanner.close();
-
-        // Jika tidak ada data
-        if (frekuensi.isEmpty()) {
-            return;
-        }
-
+    private static int[] proses(Map<Integer, Integer> frekuensi) {
         int tertinggi = Integer.MIN_VALUE;
         int terendah = Integer.MAX_VALUE;
-
-        int terbanyak = 0;
-        int tersedikit = 0;
-
-        int jumlahTertinggi = 0;
-        int jumlahTerendah = 0;
-
+        int terbanyak = 0, tersedikit = 0;
+        int nilaiJumlahTertinggi = 0, nilaiJumlahTerendah = 0;
         boolean pertama = true;
 
         for (Map.Entry<Integer, Integer> entry : frekuensi.entrySet()) {
             int nilai = entry.getKey();
             int jumlah = entry.getValue();
+            int hasilKali = nilai * jumlah;
 
-            // Tertinggi
-            if (nilai > tertinggi) {
-                tertinggi = nilai;
+            if (nilai > tertinggi) tertinggi = nilai;
+            if (nilai < terendah) terendah = nilai;
+
+            if (pertama) {
+                terbanyak = nilai; tersedikit = nilai;
+                nilaiJumlahTertinggi = nilai; nilaiJumlahTerendah = nilai;
+            } else {
+                if (jumlah > frekuensi.get(terbanyak) || (jumlah == frekuensi.get(terbanyak) && nilai > terbanyak)) {
+                    terbanyak = nilai;
+                }
+                if (jumlah < frekuensi.get(tersedikit) || (jumlah == frekuensi.get(tersedikit) && nilai < tersedikit)) {
+                    tersedikit = nilai;
+                }
+                if (hasilKali > (nilaiJumlahTertinggi * frekuensi.get(nilaiJumlahTertinggi)) || 
+                    (hasilKali == (nilaiJumlahTertinggi * frekuensi.get(nilaiJumlahTertinggi)) && nilai > nilaiJumlahTertinggi)) {
+                    nilaiJumlahTertinggi = nilai;
+                }
+                if (hasilKali < (nilaiJumlahTerendah * frekuensi.get(nilaiJumlahTerendah)) || 
+                    (hasilKali == (nilaiJumlahTerendah * frekuensi.get(nilaiJumlahTerendah)) && nilai < nilaiJumlahTerendah)) {
+                    nilaiJumlahTerendah = nilai;
+                }
             }
-
-            // Terendah
-            if (nilai < terendah) {
-                terendah = nilai;
-            }
-
-            // Terbanyak
-            if (pertama || jumlah > frekuensi.get(terbanyak)
-                    || (jumlah == frekuensi.get(terbanyak) && nilai > terbanyak)) {
-                terbanyak = nilai;
-            }
-
-            // Tersedikit
-            if (pertama || jumlah < frekuensi.get(tersedikit)
-                    || (jumlah == frekuensi.get(tersedikit) && nilai < tersedikit)) {
-                tersedikit = nilai;
-            }
-
-            int hasil = nilai * jumlah;
-
-            // Jumlah Tertinggi
-            if (pertama || hasil > jumlahTertinggi
-                    || (hasil == jumlahTertinggi && nilai > terbanyak)) {
-                jumlahTertinggi = hasil;
-            }
-
-            // Jumlah Terendah
-            if (pertama || hasil < jumlahTerendah
-                    || (hasil == jumlahTerendah && nilai < tersedikit)) {
-                jumlahTerendah = hasil;
-            }
-
             pertama = false;
         }
+        return new int[]{tertinggi, terendah, terbanyak, tersedikit, nilaiJumlahTertinggi, nilaiJumlahTerendah};
+    }
 
-        // Cari nilai yang menghasilkan jumlah tertinggi
-        int nilaiJumlahTertinggi = 0;
-        int nilaiJumlahTerendah = 0;
-
-        boolean pertamaJumlah = true;
-
-        for (Map.Entry<Integer, Integer> entry : frekuensi.entrySet()) {
-            int nilai = entry.getKey();
-            int jumlah = entry.getValue();
-            int hasil = nilai * jumlah;
-
-            if (pertamaJumlah
-                    || hasil > jumlahTertinggi
-                    || (hasil == jumlahTertinggi && nilai > nilaiJumlahTertinggi)) {
-                jumlahTertinggi = hasil;
-                nilaiJumlahTertinggi = nilai;
-            }
-
-            if (pertamaJumlah
-                    || hasil < jumlahTerendah
-                    || (hasil == jumlahTerendah && nilai < nilaiJumlahTerendah)) {
-                jumlahTerendah = hasil;
-                nilaiJumlahTerendah = nilai;
-            }
-
-            pertamaJumlah = false;
-        }
-
-        System.out.println("Tertinggi: " + tertinggi);
-        System.out.println("Terendah: " + terendah);
-        System.out.println("Terbanyak: " + terbanyak + " (" + frekuensi.get(terbanyak) + "x)");
-        System.out.println("Tersedikit: " + tersedikit + " (" + frekuensi.get(tersedikit) + "x)");
-        System.out.println("Jumlah Tertinggi: " + nilaiJumlahTertinggi + " * "
-                + frekuensi.get(nilaiJumlahTertinggi) + " = " + jumlahTertinggi);
-        System.out.println("Jumlah Terendah: " + nilaiJumlahTerendah + " * "
-                + frekuensi.get(nilaiJumlahTerendah) + " = " + jumlahTerendah);
+    private static void cetakOutput(Map<Integer, Integer> frekuensi, int[] hasil) {
+        System.out.println("Tertinggi: " + hasil[0]);
+        System.out.println("Terendah: " + hasil[1]);
+        System.out.println("Terbanyak: " + hasil[2] + " (" + frekuensi.get(hasil[2]) + "x)");
+        System.out.println("Tersedikit: " + hasil[3] + " (" + frekuensi.get(hasil[3]) + "x)");
+        System.out.println("Jumlah Tertinggi: " + hasil[4] + " * " + frekuensi.get(hasil[4]) + " = " + (hasil[4] * frekuensi.get(hasil[4])));
+        System.out.println("Jumlah Terendah: " + hasil[5] + " * " + frekuensi.get(hasil[5]) + " = " + (hasil[5] * frekuensi.get(hasil[5])));
     }
 }
